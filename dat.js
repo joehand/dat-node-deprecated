@@ -41,10 +41,14 @@ class Dat {
     return this.archive.version
   }
 
-  join (opts, cb) {
+  async join (network, opts, cb) {
     if (typeof opts === 'function') {
       cb = opts
       opts = {}
+    }
+    if (!network || !network.swarm) {
+      opts = network
+      network = null
     }
 
     var self = this
@@ -73,10 +77,10 @@ class Dat {
       }
     }, opts)
 
-    var network = self.network = createNetwork(self.archive, netOpts, cb)
+    self.network = await createNetwork(self.archive, network, netOpts, cb)
     self.options.network = netOpts
 
-    return network
+    return self.network
   }
 
   async leave () {
